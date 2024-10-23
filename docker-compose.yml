@@ -1,0 +1,44 @@
+services:
+  portal_api:
+    image: portal_api
+    build: D:\Projetos\HumanIT\Spring Boot\portal_api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - authentication_microservice
+      - yuriclaro_exercicio_spring_boot
+
+  authentication_microservice:
+    image: authentication_microservice
+    build: D:\Projetos\HumanIT\Spring Boot\authentication_microservice
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/springboot2
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234
+
+  yuriclaro_exercicio_spring_boot:
+    image: yuriclaro_exercicio_spring_boot
+    build: D:\Projetos\HumanIT\Spring Boot\yuriclaro-exercicio-spring-boot-1
+    ports:
+      - "8082:8082"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/springboot1
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: 1234
+
+  postgres:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: springboot1
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - D:\Projetos\HumanIT\Spring Boot\portal_api\src\main\resources\postgres-init:/docker-entrypoint-initdb.d
